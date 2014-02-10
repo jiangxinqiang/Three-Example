@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>L-One</title>
+    <script src="../lib/three.min.js"></script>
+    <style type="text/css">
+        body{
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+        }
+    </style>
+</head>
+<body>
+
+</body>
+<script id="bird">
+    var Bird = function(){
+        var scope = this;
+        THREE.Geometry.call(this);
+
+        v(   5,   0,   0 );
+        v( - 5, - 2,   1 );
+        v( - 5,   0,   0 );
+        v( - 5, - 2, - 1 );
+
+        v(   0,   2, - 6 );
+        v(   0,   2,   6 );
+        v(   2,   0,   0 );
+        v( - 3,   0,   0 );
+
+        f3( 0, 2, 1 );
+
+        f3( 4, 7, 6 );
+        f3( 5, 6, 7 );
+
+        this.computeCentroids();
+        this.computeFaceNormals();
+
+        function v(x,y,z){
+            scope.vertices.push(new THREE.Vector3(x,y,z));
+        }
+
+        function f3(a,b,c){
+            scope.faces.push(new THREE.Face3(a,b,c));
+        }
+
+    };
+
+    Bird.prototype = Object.create(THREE.Geometry.prototype);
+</script>
+<script>
+
+    var renderer,camera,scene,bird;
+
+    function init(){
+        var width = window.innerWidth;
+        var height = window.innerHeight;
+
+        renderer = new THREE.CanvasRenderer();
+        renderer.setSize(width,height);
+        document.body.appendChild(renderer.domElement);
+
+        camera = new THREE.PerspectiveCamera(75,width/height,1,10000);
+        camera.position.z = 300;
+
+        scene = new THREE.Scene();
+
+        var geometry = new Bird();
+        var material = new THREE.MeshBasicMaterial({color:Math.random() * 0xffffff, side: THREE.DoubleSide});
+        bird = new THREE.Mesh(geometry,material);
+        bird.phase = Math.floor( Math.random() * 62.83 );
+        scene.add(bird);
+    }
+
+    function animate(){
+        requestAnimationFrame(animate);
+        render();
+    }
+
+    function render(){
+        var timer = Date.now()*0.005;
+        bird.rotation.y = 1.4;
+        bird.rotation.z = 0.3;
+        bird.geometry.vertices[ 5 ].y = bird.geometry.vertices[ 4 ].y = Math.sin( timer ) * 5;
+        renderer.render(scene,camera);
+    }
+
+    init();
+    animate();
+
+</script>
+</html>
